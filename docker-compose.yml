@@ -1,0 +1,19 @@
+version: '3'
+services:
+  ewp-rest:
+    build:
+      context: .
+      dockerfile: Dockerfile-REST
+    container_name: ewp-rest
+    env_file: .env
+    command: sh /root/entrypoint-rest.sh
+    volumes:
+      - ${EWP_CERTS}:/go/certs/:ro
+      - ${EWP_DATA}:/data/:rw
+    ports:
+      - "${EWP_REST_EXT_PORT}:${EWP_REST_INT_PORT}"
+    dns:
+      - 127.0.0.11
+      - 8.8.8.8
+      - 8.8.4.4
+    restart: always

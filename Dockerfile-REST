@@ -1,0 +1,25 @@
+# Start from a Debian image with the latest version of Go installed
+FROM golang
+
+RUN apt-get update && apt-get install -y libxml2-dev xmlsec1 libxslt1-dev libxmlsec1-dev libxmlsec1-openssl mysql-client
+
+RUN mkdir -p /go/src/github.com/gorilla/mux && \
+    mkdir -p /go/certs && \
+    git clone https://github.com/gorilla/mux.git /go/src/github.com/gorilla/mux/
+
+
+RUN go get -u github.com/levigross/grequests && \
+    go get -u golang.org/x/crypto/ssh && \
+    go get github.com/google/uuid && \
+    go get github.com/spacemonkeygo/httpsig && \
+    go get github.com/lestrrat/go-xmlsec && \
+    go get -u github.com/go-sql-driver/mysql
+
+RUN mkdir -p /go/src/github.com/ewp/ewp-rest
+
+ADD .env /etc/environment
+ADD entrypoint-rest.sh /root/entrypoint-rest.sh
+
+ADD ewp-rest /go/src/github.com/ewp/ewp-rest/
+
+RUN go install github.com/ewp/ewp-rest
